@@ -7,11 +7,11 @@
 
 const app = {
   app_id: 127010,
-  title: 'My Awesome E-Com Plus App',
-  slug: 'my-awesome-app',
+  title: 'Fedex',
+  slug: 'fedex',
   type: 'external',
   state: 'active',
-  authentication: true,
+  authentication: false,
 
   /**
    * Uncomment modules above to work with E-Com Plus Mods API on Storefront.
@@ -22,7 +22,7 @@ const app = {
      * Triggered to calculate shipping options, must return values and deadlines.
      * Start editing `routes/ecom/modules/calculate-shipping.js`
      */
-    // calculate_shipping:   { enabled: true },
+    calculate_shipping:   { enabled: true },
 
     /**
      * Triggered to validate and apply discount value, must return discount and conditions.
@@ -51,7 +51,7 @@ const app = {
       'GET'            // Read store info
     ],
     procedures: [
-      'POST'           // Create procedures to receive webhooks
+      //'POST'           // Create procedures to receive webhooks
     ],
     products: [
       // 'GET',           // Read products with public and private fields
@@ -82,7 +82,7 @@ const app = {
       // 'DELETE',        // Delete customers
     ],
     orders: [
-      // 'GET',           // List/read orders with public and private fields
+      'GET',           // List/read orders with public and private fields
       // 'POST',          // Create orders
       // 'PATCH',         // Edit orders
       // 'PUT',           // Overwrite orders
@@ -138,37 +138,49 @@ const app = {
   },
 
   admin_settings: {
-    /**
-     * JSON schema based fields to be configured by merchant and saved to app `data` / `hidden_data`, such as:
-
-     webhook_uri: {
+    zip: {
+      schema: {
+        type: 'string',
+        maxLength: 9,
+        pattern: '^[0-9]{5}-?[0-9]{3}$',
+        title: 'CEP de origem'
+      },
+      hide: true
+    },
+    country_code: {
+      schema: {
+        type: 'string',
+        maxLength: 2,
+        pattern: '^[A-Z]{2}$',
+        title: 'Código do País de Origem',
+        default: 'BR'
+      },
+      hide: true
+    },
+    api_key: {
        schema: {
-         type: 'string',
-         maxLength: 255,
-         format: 'uri',
-         title: 'Notifications URI',
-         description: 'Unique notifications URI available on your Custom App dashboard'
+        type: 'string',
+        maxLength: 50,
+        title: 'Api key'
        },
        hide: true
      },
-     token: {
+     api_secret: {
        schema: {
          type: 'string',
          maxLength: 50,
-         title: 'App token'
+         title: 'Api secret'
        },
        hide: true
      },
-     opt_in: {
+     taxes: {
        schema: {
          type: 'boolean',
          default: false,
-         title: 'Some config option'
+         title: 'Inclusão de taxas e impostos no cálculo'
        },
        hide: false
-     },
-
-     */
+     }
   }
 }
 
