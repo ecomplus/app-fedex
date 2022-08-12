@@ -157,6 +157,24 @@ const app = {
       },
       hide: true
     },
+    currency: {
+      schema: {
+        type: 'string',
+        maxLength: 3,
+        pattern: '^[A-Z]{3}$',
+        title: 'Código da moeda a ser cotada',
+        default: 'USD'
+      },
+      hide: true
+    },
+    accountNumber: {
+      schema: {
+        type: 'string',
+        maxLength: 50,
+        title: 'Número da conta'
+       },
+       hide: false
+    },
     api_key: {
        schema: {
         type: 'string',
@@ -169,10 +187,18 @@ const app = {
        schema: {
          type: 'string',
          maxLength: 50,
-         title: 'Api secret'
+         title: 'Secret Key'
        },
        hide: true
      },
+     isSandbox: {
+      schema: {
+        type: 'boolean',
+        default: false,
+        title: 'Api de testes'
+      },
+      hide: false
+    },
      taxes: {
        schema: {
          type: 'boolean',
@@ -180,7 +206,35 @@ const app = {
          title: 'Inclusão de taxas e impostos no cálculo'
        },
        hide: false
-     }
+     },
+     rateSortOrder: {
+      schema: {
+        title: "Tipo de cálculo",
+        type: "string",
+        description: "Escolha o tipo de cálculo utilizado a ser utilizado em sua loja",
+        enum: [
+          "Maior para o menor preço do frete",
+          "Crescente prazo de entrega",
+          "Decrescente prazo de entrega"
+        ],
+        default: 'Maior para o menor preço do frete'
+      },
+      hide: false
+    },
+    pickupType: {
+      schema: {
+        title: "Tipo de coleta",
+        type: "string",
+        description: "Escolha o tipo de coleta a ser utilizado em pedidos da sua loja",
+        enum: [
+          "Agendar com a fedex",
+          "Deixar na agencia fedex",
+          "Retirada Agendada"
+        ],
+        default: 'Deixar na agencia fedex'
+      },
+      hide: false
+    }
   }
 }
 
