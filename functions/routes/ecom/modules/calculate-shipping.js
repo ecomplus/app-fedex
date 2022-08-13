@@ -119,6 +119,7 @@ exports.post = async ({ appSdk }, req, res) => {
     requestedShipment.preferredCurrency = currency
     requestedShipment.rateRequestType = ["LIST","PREFERRED","ACCOUNT"]
     requestedShipment.pickupType = pickup
+    requestedShipment.edtRequestType = taxes ? 'ALL' : 'NONE'
 
     const body = {
       cepOrigem: originZip,
