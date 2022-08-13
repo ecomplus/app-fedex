@@ -157,6 +157,16 @@ const app = {
       },
       hide: true
     },
+    countryCodeTo: {
+      schema: {
+        type: 'string',
+        maxLength: 2,
+        pattern: '^[A-Z]{2}$',
+        title: 'Código do País de Destino',
+        default: 'US'
+      },
+      hide: true
+    },
     currency: {
       schema: {
         type: 'string',
