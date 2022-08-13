@@ -1,23 +1,28 @@
 {
-  "app_id": 9000,
-  "title": "My Awesome E-Com Plus App",
-  "slug": "my-awesome-ecom-plus-app",
+  "app_id": 127010,
+  "title": "Fedex",
+  "slug": "fedex",
   "type": "external",
   "state": "active",
-  "authentication": true,
-  "modules": {},
+  "authentication": false,
+  "modules": {
+    "calculate_shipping": {
+      "enabled": true,
+      "endpoint": "https://us-central1-ecom-fedex.cloudfunctions.net/app/ecom/modules/calculate-shipping"
+    }
+  },
   "auth_scope": {
     "stores/me": [
       "GET"
     ],
-    "procedures": [
-      "POST"
-    ],
+    "procedures": [],
     "products": [],
     "brands": [],
     "categories": [],
     "customers": [],
-    "orders": [],
+    "orders": [
+      "GET"
+    ],
     "carts": [],
     "orders/fulfillments": [],
     "orders/payments_history": [],
@@ -26,6 +31,115 @@
     "products/price": [],
     "products/variations/price": []
   },
-  "auth_callback_uri": "https://us-central1-ecom-app-boilerplate.cloudfunctions.net/app/ecom/auth-callback",
+  "admin_settings": {
+    "zip": {
+      "schema": {
+        "type": "string",
+        "maxLength": 9,
+        "pattern": "^[0-9]{5}-?[0-9]{3}$",
+        "title": "CEP de origem"
+      },
+      "hide": true
+    },
+    "countryCode": {
+      "schema": {
+        "type": "string",
+        "maxLength": 2,
+        "pattern": "^[A-Z]{2}$",
+        "title": "Código do País de Origem",
+        "default": "BR"
+      },
+      "hide": true
+    },
+    "countryCodeTo": {
+      "schema": {
+        "type": "string",
+        "maxLength": 2,
+        "pattern": "^[A-Z]{2}$",
+        "title": "Código do País de Destino",
+        "default": "US"
+      },
+      "hide": true
+    },
+    "currency": {
+      "schema": {
+        "type": "string",
+        "maxLength": 3,
+        "pattern": "^[A-Z]{3}$",
+        "title": "Código da moeda a ser cotada",
+        "default": "USD"
+      },
+      "hide": true
+    },
+    "accountNumber": {
+      "schema": {
+        "type": "string",
+        "maxLength": 50,
+        "title": "Número da conta"
+      },
+      "hide": false
+    },
+    "api_key": {
+      "schema": {
+        "type": "string",
+        "maxLength": 50,
+        "title": "Api key"
+      },
+      "hide": true
+    },
+    "api_secret": {
+      "schema": {
+        "type": "string",
+        "maxLength": 50,
+        "title": "Secret Key"
+      },
+      "hide": true
+    },
+    "isSandbox": {
+      "schema": {
+        "type": "boolean",
+        "default": false,
+        "title": "Api de testes"
+      },
+      "hide": false
+    },
+    "taxes": {
+      "schema": {
+        "type": "boolean",
+        "default": false,
+        "title": "Inclusão de taxas e impostos no cálculo"
+      },
+      "hide": false
+    },
+    "rateSortOrder": {
+      "schema": {
+        "title": "Tipo de cálculo",
+        "type": "string",
+        "description": "Escolha o tipo de cálculo utilizado a ser utilizado em sua loja",
+        "enum": [
+          "Maior para o menor preço do frete",
+          "Crescente prazo de entrega",
+          "Decrescente prazo de entrega"
+        ],
+        "default": "Maior para o menor preço do frete"
+      },
+      "hide": false
+    },
+    "pickupType": {
+      "schema": {
+        "title": "Tipo de coleta",
+        "type": "string",
+        "description": "Escolha o tipo de coleta a ser utilizado em pedidos da sua loja",
+        "enum": [
+          "Agendar com a fedex",
+          "Deixar na agencia fedex",
+          "Retirada Agendada"
+        ],
+        "default": "Deixar na agencia fedex"
+      },
+      "hide": false
+    }
+  },
+  "auth_callback_uri": "https://us-central1-ecom-fedex.cloudfunctions.net/app/ecom/auth-callback",
   "version": "1.0.0"
 }
