@@ -12,7 +12,6 @@ module.exports = (accessToken, isSandbox) => {
   }
 
   return axios.create({
-    //baseURL: 'https://api.galaxpay.com.br/v2',
     baseURL: `https://apis.${isSandbox ? 'sandbox.' : ''}fedex.com`,
     headers
   })

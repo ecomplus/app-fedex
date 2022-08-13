@@ -104,43 +104,60 @@ exports.post = async ({ appSdk }, req, res) => {
     })
 
     const requestedShipment = {}
+    const accountNumber = {}
+    const rateRequestControlParameters = {}
+    // rate params
+    rateRequestControlParameters.returnTransitTimes = true
+    rateRequestControlParameters.servicesNeededOnRateFailure = true
+    rateRequestControlParameters.rateSortOrder = sort
+    // account number
+    accountNumber.value = accountNumber
+    // requested shipment information
+    // shipper
     requestedShipment.shipper = {
       address: {
         postalCode: originZip,
         countryCode
       }
     }
+    // recipient
     requestedShipment.recipient = {
       address: {
         postalCode: destinationZip,
-        countryCode: params.to && params.to.country_code
+        countryCode: appData.countryCodeTo
       }
     }
+    // currency
     requestedShipment.preferredCurrency = currency
+    // type rate
     requestedShipment.rateRequestType = ["LIST","PREFERRED","ACCOUNT"]
+    // pickup
     requestedShipment.pickupType = pickup
+    // taxes
     requestedShipment.edtRequestType = taxes ? 'ALL' : 'NONE'
+    // total package
+    requestedShipment.requestedPackageLineItems = [{
+      weight: {
+        units: 'KG',
+        value: finalWeight
+      }
+    }]
+    requestedShipment.totalWeight = finalWeight
+    requestedShipment.customsClearanceDetail = commodities
 
     const body = {
-      cepOrigem: originZip,
-      cepDestino: destinationZip,
-      customsClearanceDetail: commodities,
-      origem: 'E-Com Plus',
-      servicos: [
-        'E',
-        'X',
-        'R'
-      ],
-      ordernar,
-      produtos
+      accountNumber,
+      rateRequestControlParameters,
+      requestedShipment
     }
     // send POST request to kangu REST API
+    const url = `https://apis.${isSandbox ? 'sandbox.' : ''}fedex.com//rate/v1/rates/quotes`
     return axios.post(
-      'https://portal.kangu.com.br/tms/transporte/simular',
+      url,
       body,
       {
         headers: {
-          token,
+          'Authorization': `bearer ${accessToken}`,
           accept: 'application/json',
           'Content-Type': 'application/json'
         }
@@ -148,6 +165,7 @@ exports.post = async ({ appSdk }, req, res) => {
     )
 
       .then(({ data, status }) => {
+        console.log('Resultado da requisicao', data)
         let result
         if (typeof data === 'string') {
           try {
