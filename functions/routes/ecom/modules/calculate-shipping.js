@@ -44,7 +44,7 @@ exports.post = async ({ appSdk }, req, res) => {
     ? params.from.zip.replace(/\D/g, '')
     : appData.zip ? appData.zip.replace(/\D/g, '') : ''
   
-  const { currency, country_code, taxes, rateSortOrder, pickupType, accountNumber } = appData
+  const { currency, countryCode, taxes, rateSortOrder, pickupType, accountNumber } = appData
 
   const pickup = parsePickupType(pickupType)
   const sort = parseShippingSort(rateSortOrder)
@@ -102,6 +102,23 @@ exports.post = async ({ appSdk }, req, res) => {
         name
       })
     })
+
+    const requestedShipment = {}
+    requestedShipment.shipper = {
+      address: {
+        postalCode: originZip,
+        countryCode
+      }
+    }
+    requestedShipment.recipient = {
+      address: {
+        postalCode: destinationZip,
+        countryCode: params.to && params.to.country_code
+      }
+    }
+    requestedShipment.preferredCurrency = currency
+    requestedShipment.rateRequestType = ["LIST","PREFERRED","ACCOUNT"]
+    requestedShipment.pickupType = pickup
 
     const body = {
       cepOrigem: originZip,

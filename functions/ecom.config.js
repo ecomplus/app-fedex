@@ -147,7 +147,7 @@ const app = {
       },
       hide: true
     },
-    country_code: {
+    countryCode: {
       schema: {
         type: 'string',
         maxLength: 2,
