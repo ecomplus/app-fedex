@@ -39,6 +39,18 @@ exports.post = async ({ appSdk }, req, res) => {
     response.free_shipping_from_value = appData.free_shipping_from_value
   }
 
+  const getBusinessDatesCount = (endDate) => {
+    const startDate = new Date()
+      let count = 0;
+      const curDate = new Date(startDate.getTime());
+      while (curDate <= endDate) {
+          const dayOfWeek = curDate.getDay();
+          if(dayOfWeek !== 0 && dayOfWeek !== 6) count++;
+          curDate.setDate(curDate.getDate() + 1);
+      }
+      return count;
+  }
+
   const destinationZip = params.to ? params.to.zip.replace(/\D/g, '') : ''
   const originZip = params.from
     ? params.from.zip.replace(/\D/g, '')
@@ -171,7 +183,7 @@ exports.post = async ({ appSdk }, req, res) => {
           try {
             result = JSON.parse(data)
           } catch (e) {
-            console.log('> kangu invalid JSON response')
+            console.log('> Fedex invalid JSON response')
             return res.status(409).send({
               error: 'CALCULATE_INVALID_RES',
               message: data
@@ -181,16 +193,15 @@ exports.post = async ({ appSdk }, req, res) => {
           result = data
         }
 
-        if (result && Number(status) === 200 && Array.isArray(result)) {
+        if (result && Number(status) === 200 && Array.isArray(result && result.output && result.output.rateReplyDetails)) {
           // success response
-          let lowestPriceShipping
-          result.forEach(kanguService => {
+          const rules = result && result.output && result.output.rateReplyDetails
+          const quoteDate = result.output && result.output.quoteDate
+          const delivery_time = getBusinessDatesCount(quoteDate)
+          rules.forEach(fedexService => {
             // parse to E-Com Plus shipping line object
-            const serviceCode = String(kanguService.servico)
-            const price = kanguService.vlrFrete
-            const kanguPickup = Array.isArray(kanguService.pontosRetira)
-              ? kanguService.pontosRetira[0]
-              : false
+            const serviceCode = String(fedexService.serviceType)
+            const price = fedexService[0].totalNetChargeWithDutiesAndTaxes
 
             // push shipping service object to response
             const shippingLine = {
@@ -204,12 +215,9 @@ exports.post = async ({ appSdk }, req, res) => {
               total_price: price,
               discount: 0,
               delivery_time: {
-                days: parseInt(kanguService.prazoEnt, 10),
+                days: parseInt(delivery_time, 10),
                 working_days: true
               },
-              delivery_instructions: kanguPickup
-                ? `${kanguPickup.nome} - ${completeAddress(kanguPickup.endereco)}`
-                : undefined,
               posting_deadline: {
                 days: 3,
                 ...appData.posting_deadline
@@ -220,102 +228,18 @@ exports.post = async ({ appSdk }, req, res) => {
                   unit: 'kg'
                 }
               },
-              custom_fields: [
-                {
-                  field: 'kangu_reference',
-                  value: kanguPickup
-                    ? String(kanguPickup.referencia)
-                    : String(kanguService.referencia)
-                },
-                {
-                  field: 'nfe_required',
-                  value: kanguService.nf_obrig === 'N' ? 'false' : 'true'
-                }
-              ],
-              flags: ['kangu-ws', `kangu-${serviceCode}`.substr(0, 20)]
-            }
-            if (!lowestPriceShipping || lowestPriceShipping.price > price) {
-              lowestPriceShipping = shippingLine
-            }
-
-            // check for default configured additional/discount price
-            if (appData.additional_price) {
-              if (appData.additional_price > 0) {
-                shippingLine.other_additionals = [{
-                  tag: 'additional_price',
-                  label: 'Adicional padrão',
-                  price: appData.additional_price
-                }]
-              } else {
-                // negative additional price to apply discount
-                shippingLine.discount -= appData.additional_price
-              }
-              // update total price
-              shippingLine.total_price += appData.additional_price
-            }
-
-            // search for discount by shipping rule
-            const shippingName = kanguService.transp_nome || kanguService.descricao
-            if (Array.isArray(shippingRules)) {
-              for (let i = 0; i < shippingRules.length; i++) {
-                const rule = shippingRules[i]
-                if (
-                  rule &&
-                  matchService(rule, shippingName) &&
-                  checkZipCode(rule) &&
-                  !(rule.min_amount > params.subtotal)
-                ) {
-                  // valid shipping rule
-                  if (rule.discount && rule.service_name) {
-                    let discountValue = rule.discount.value
-                    if (rule.discount.percentage) {
-                      discountValue *= (shippingLine.total_price / 100)
-                    }
-                    shippingLine.discount += discountValue
-                    shippingLine.total_price -= discountValue
-                    if (shippingLine.total_price < 0) {
-                      shippingLine.total_price = 0
-                    }
-                    break
-                  }
-                }
-              }
-            }
-
-            // change label
-            let label = shippingName
-            if (appData.services && Array.isArray(appData.services) && appData.services.length) {
-              const service = appData.services.find(service => {
-                return service && matchService(service, label)
-              })
-              if (service && service.label) {
-                label = service.label
-              }
+              flags: ['fedex-ws', `fedex-${serviceCode}`.substr(0, 20)]
             }
 
             response.shipping_services.push({
-              label,
-              carrier: kanguService.transp_nome,
-              carrier_doc_number: typeof kanguService.cnpjTransp === 'string'
-                ? kanguService.cnpjTransp.replace(/\D/g, '').substr(0, 19)
-                : undefined,
-              service_name: `${(kanguService.descricao || serviceCode)} (Kangu)`,
+              label: fedexService.serviceName,
+              carrier: fedexService.serviceName,
+              service_name: `${(serviceCode)} (Kangu)`,
               service_code: serviceCode,
               shipping_line: shippingLine
             })
           })
 
-          if (lowestPriceShipping) {
-            const { price } = lowestPriceShipping
-            const discount = typeof response.free_shipping_from_value === 'number' &&
-              response.free_shipping_from_value <= cartSubtotal
-              ? price
-              : 0
-            if (discount) {
-              lowestPriceShipping.total_price = price - discount
-              lowestPriceShipping.discount = discount
-            }
-          }
           res.send(response)
         } else {
           // console.log(data)
