@@ -169,6 +169,9 @@ exports.post = async ({ appSdk }, req, res) => {
       url,
       body,
       {
+        timeout: (params.is_checkout_confirmation ? 8000 : 4500)
+      },
+      {
         headers: {
           'Authorization': `bearer ${accessToken}`,
           accept: 'application/json',
