@@ -29,6 +29,7 @@ const AxiosOrToken = (resolve, reject, clienId, clientSecret, isSandbox, storeId
       .then((resp) => {
         authenticate(resp.access_token, resolve)
         if (documentRef) {
+          console.log('Atualizar token')
           documentRef.set({ ...resp, isSandbox }).catch(console.error)
         }
       })
@@ -42,6 +43,10 @@ const AxiosOrToken = (resolve, reject, clienId, clientSecret, isSandbox, storeId
         if (documentSnapshot.exists &&
           Date.now() - documentSnapshot.updateTime.toDate().getTime() <= 50 * 60 * 1000 // access token expires in 50 minutes
         ) {
+          console.log('Tempo de agora', Date.now())
+          console.log('Tempo de alteração', documentSnapshot.updateTime.toDate().getTime())
+          console.log('Tempo de subtracao', Date.now() - documentSnapshot.updateTime.toDate().getTime())
+          console.log('Entrei no authenticate')
           authenticate(data.access_token, resolve)
         } else {
           handleAuth(resolve)
