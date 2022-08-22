@@ -147,7 +147,7 @@ const app = {
       },
       hide: true
     },
-    countryCode: {
+    country_code: {
       schema: {
         type: 'string',
         maxLength: 2,
@@ -157,7 +157,7 @@ const app = {
       },
       hide: true
     },
-    countryCodeTo: {
+    country_code_to: {
       schema: {
         type: 'string',
         maxLength: 2,
@@ -177,7 +177,7 @@ const app = {
       },
       hide: true
     },
-    accountNumber: {
+    account_number: {
       schema: {
         type: 'string',
         maxLength: 50,
@@ -201,7 +201,7 @@ const app = {
        },
        hide: true
      },
-     isSandbox: {
+     is_sandbox: {
       schema: {
         type: 'boolean',
         default: false,
@@ -217,7 +217,7 @@ const app = {
        },
        hide: false
      },
-     rateSortOrder: {
+     rate_sort_order: {
       schema: {
         title: "Tipo de cálculo",
         type: "string",
@@ -231,7 +231,7 @@ const app = {
       },
       hide: false
     },
-    pickupType: {
+    pickup_type: {
       schema: {
         title: "Tipo de coleta",
         type: "string",

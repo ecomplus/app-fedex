@@ -24,7 +24,7 @@ exports.post = async ({ appSdk }, req, res) => {
   // merge all app options configured by merchant
   const appData = Object.assign({}, application.data, application.hidden_data)
 
-  const { api_key, api_secret } = appData
+  const { api_key, api_secret, is_sandbox } = appData
   if (!api_key && !api_secret) {
     // must have configured kangu doc number and token
     return res.status(409).send({
@@ -32,8 +32,7 @@ exports.post = async ({ appSdk }, req, res) => {
       message: 'Credentials are unset on app hidden data (merchant must configure the app)'
     })
   }
-  const { isSandbox } = appData
-  const accessToken = await getToken(api_key, api_secret, isSandbox, storeId)
+  const accessToken = await getToken(api_key, api_secret, is_sandbox, storeId)
 
   if (appData.free_shipping_from_value >= 0) {
     response.free_shipping_from_value = appData.free_shipping_from_value
@@ -56,10 +55,10 @@ exports.post = async ({ appSdk }, req, res) => {
     ? params.from.zip.replace(/\D/g, '')
     : appData.zip ? appData.zip.replace(/\D/g, '') : ''
   
-  const { currency, countryCode, taxes, rateSortOrder, pickupType, accountNumber } = appData
+  const { currency, country_code, taxes, rate_sort_order, pickup_type, account_number } = appData
 
-  const pickup = parsePickupType(pickupType)
-  const sort = parseShippingSort(rateSortOrder)
+  const pickup = parsePickupType(pickup_type)
+  const sort = parseShippingSort(rate_sort_order)
 
   if (!params.to) {
     // just a free shipping preview with no shipping address received
@@ -123,20 +122,20 @@ exports.post = async ({ appSdk }, req, res) => {
     rateRequestControlParameters.servicesNeededOnRateFailure = true
     rateRequestControlParameters.rateSortOrder = sort
     // account number
-    accountNumber.value = accountNumber
+    accountNumber.value = account_number
     // requested shipment information
     // shipper
     requestedShipment.shipper = {
       address: {
         postalCode: originZip,
-        countryCode
+        countryCode: country_code
       }
     }
     // recipient
     requestedShipment.recipient = {
       address: {
         postalCode: destinationZip,
-        countryCode: appData.countryCodeTo
+        countryCode: appData.country_code_to
       }
     }
     // currency
