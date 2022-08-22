@@ -4,11 +4,10 @@ module.exports = (clienId, clientSecret, storeId, isSandbox) => new Promise((res
   const axios = require('./create-axios')(accessToken, isSandbox)
   const request = isRetry => {
     console.log(`>> Create Auth s:${storeId}--Sandbox: ${isSandbox}`)
-    axios.post('/oauth/token', {
-      grant_type: 'client_credentials',
-      client_id: clienId,
-      client_secret: clientSecret
-    })
+    const data = `grant_type=client_credentials&client_id=${clienId}&client_secret=${clientSecret}`
+    axios.post('/oauth/token', 
+    data
+)
       .then(({ data }) => resolve(data))
       .catch(err => {
         console.log('Deu erro', err.message)
