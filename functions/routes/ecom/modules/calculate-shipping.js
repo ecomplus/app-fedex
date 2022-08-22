@@ -163,7 +163,7 @@ exports.post = async ({ appSdk }, req, res) => {
       requestedShipment
     }
     // send POST request to kangu REST API
-    const url = `https://apis.${is_sandbox ? 'sandbox.' : ''}fedex.com//rate/v1/rates/quotes`
+    const url = `https://apis${is_sandbox ? '-sandbox.' : '.'}fedex.com/rate/v1/rates/quotes`
     return axios.post(
       url,
       body,
