@@ -39,7 +39,9 @@ const AxiosOrToken = (resolve, reject, clienId, clientSecret, isSandbox, storeId
     documentRef.get()
       .then((documentSnapshot) => {
         const data = documentSnapshot.data() || null
-        if (documentSnapshot.exists && data && data.expires_in && new Date(data.expires_in).getTime() <= 50 * 60 * 1000) {
+        if (documentSnapshot.exists &&
+          Date.now() - documentSnapshot.updateTime.toDate().getTime() <= 50 * 60 * 1000 // access token expires in 50 minutes
+        ) {
           authenticate(data.access_token, resolve)
         } else {
           handleAuth(resolve)

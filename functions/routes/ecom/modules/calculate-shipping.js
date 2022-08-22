@@ -263,7 +263,7 @@ exports.post = async ({ appSdk }, req, res) => {
           } else {
             result = data
           }
-          console.log('> kangu invalid result:', data)
+          console.log('> Fedex invalid result:', data)
           if (result && result.data) {
             // kangu error message
             return res.status(409).send({
