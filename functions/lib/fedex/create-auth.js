@@ -11,6 +11,8 @@ module.exports = (clienId, clientSecret, storeId, isSandbox) => new Promise((res
     })
       .then(({ data }) => resolve(data))
       .catch(err => {
+        console.log('Deu erro', err.message)
+        console.log('Deu erro quero response status', err.response.status)
         if (!isRetry && err.response && err.response.status >= 429) {
           setTimeout(() => request(true), 7000)
         }
