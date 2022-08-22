@@ -1,7 +1,5 @@
 const axios = require('axios')
 module.exports = (accessToken, isSandbox) => {
-  // https://docs.galaxpay.com.br/autenticacao
-  // https://docs.galaxpay.com.br/auth/token
 
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -12,7 +10,7 @@ module.exports = (accessToken, isSandbox) => {
   }
 
   return axios.create({
-    baseURL: `https://apis.${isSandbox ? 'sandbox.' : ''}fedex.com`,
+    baseURL: `https://apis${isSandbox ? '-sandbox.' : '.'}fedex.com`,
     headers
   })
 }
