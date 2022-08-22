@@ -1,4 +1,5 @@
 const axios = require('axios')
+const ecomUtils = require('@ecomplus/utils')
 const { getToken } = require('../../../lib/fedex/create-access')
 const { parseShippingSort, parsePickupType } = require('../../../lib/fedex/parse-to-ecom')
 
