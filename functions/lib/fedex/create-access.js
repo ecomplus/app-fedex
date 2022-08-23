@@ -27,6 +27,7 @@ const AxiosOrToken = (resolve, reject, clienId, clientSecret, isSandbox, storeId
     console.log('> Fedex Auth ', storeId)
     auth(clienId, clientSecret, storeId, isSandbox)
       .then((resp) => {
+        console.log('Acesso a resposta da autorizacao',resp)
         authenticate(resp.access_token, resolve)
         if (documentRef) {
           console.log('Atualizar token')
