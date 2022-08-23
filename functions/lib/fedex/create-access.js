@@ -31,7 +31,13 @@ const AxiosOrToken = (resolve, reject, clienId, clientSecret, isSandbox, storeId
         authenticate(resp.access_token, resolve)
         if (documentRef) {
           console.log('Atualizar token')
-          documentRef.set({ ...resp, isSandbox }).catch(console.error)
+          documentRef.set(
+            { 
+              ...resp, 
+              isSandbox,
+              updatedAt: new Date()
+            }
+          ).catch(console.error)
         }
       })
       .catch(reject)
