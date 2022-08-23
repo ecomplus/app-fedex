@@ -155,6 +155,7 @@ exports.post = async ({ appSdk }, req, res) => {
       }
     }]
     requestedShipment.totalWeight = finalWeight
+    requestedShipment.customsClearanceDetail = {}
     requestedShipment.customsClearanceDetail.commodities = commodities
 
     const body = {
