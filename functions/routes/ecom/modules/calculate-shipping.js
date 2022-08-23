@@ -34,6 +34,7 @@ exports.post = async ({ appSdk }, req, res) => {
     })
   }
   const accessToken = await getToken(api_key, api_secret, is_sandbox, storeId)
+  console.log('Receba access', accessToken)
 
   if (appData.free_shipping_from_value >= 0) {
     response.free_shipping_from_value = appData.free_shipping_from_value
