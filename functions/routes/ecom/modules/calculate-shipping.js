@@ -99,17 +99,17 @@ exports.post = async ({ appSdk }, req, res) => {
       }
       finalWeight += (quantity * physicalWeight)
       cartSubtotal += (quantity * ecomUtils.price(item))
-      const unitPrice = {}
+      const customsValue = {}
       const weightObject = {}
-      unitPrice.amount = item.final_price || item.price
-      unitPrice.currency = item.currency_id
+      customsValue.amount = item.final_price || item.price
+      customsValue.currency = item.currency_id
       weightObject.units = 'KG'
       weightObject.value = physicalWeight
 
 
       commodities.push({
         weight: weightObject,
-        unitPrice,
+        customsValue,
         quantity,
         name
       })
@@ -155,7 +155,7 @@ exports.post = async ({ appSdk }, req, res) => {
       }
     }]
     requestedShipment.totalWeight = finalWeight
-    requestedShipment.customsClearanceDetail = commodities
+    requestedShipment.customsClearanceDetail.commodities = commodities
 
     const body = {
       accountNumber,
