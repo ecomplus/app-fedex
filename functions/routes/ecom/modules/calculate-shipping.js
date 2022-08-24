@@ -200,12 +200,13 @@ exports.post = async ({ appSdk }, req, res) => {
         if (result && Number(status) === 200 && Array.isArray(result && result.output && result.output.rateReplyDetails)) {
           // success response
           const rules = result && result.output && result.output.rateReplyDetails
+          console.log('Regras', JSON.stringify(rules))
           const quoteDate = result.output && result.output.quoteDate
           const delivery_time = getBusinessDatesCount(quoteDate)
           rules.forEach(fedexService => {
             // parse to E-Com Plus shipping line object
             const serviceCode = String(fedexService.serviceType)
-            const price = fedexService[0].totalNetChargeWithDutiesAndTaxes
+            const price = fedexService.ratedShipmentDetails[0].totalNetChargeWithDutiesAndTaxes
 
             // push shipping service object to response
             const shippingLine = {
@@ -238,7 +239,7 @@ exports.post = async ({ appSdk }, req, res) => {
             response.shipping_services.push({
               label: fedexService.serviceName,
               carrier: fedexService.serviceName,
-              service_name: `${(serviceCode)} (Kangu)`,
+              service_name: `${(serviceCode)} (Fedex)`,
               service_code: serviceCode,
               shipping_line: shippingLine
             })
