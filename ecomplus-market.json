@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "",
-    "short_description": "",
-    "category": "tools"
+    "title": "Fedex",
+    "short_description": "International Quotation with Sedex",
+    "category": "shipping"
   }
 }
