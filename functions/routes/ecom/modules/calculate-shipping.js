@@ -103,7 +103,7 @@ exports.post = async ({ appSdk }, req, res) => {
       const customsValue = {}
       const weightObject = {}
       customsValue.amount = item.final_price || item.price
-      customsValue.currency = item.currency_id
+      customsValue.currency = 'USD' || item.currency_id
       weightObject.units = 'KG'
       weightObject.value = physicalWeight
 
