@@ -11,7 +11,7 @@ const app = {
   slug: 'fedex',
   type: 'external',
   state: 'active',
-  authentication: false,
+  authentication: true,
 
   /**
    * Uncomment modules above to work with E-Com Plus Mods API on Storefront.
