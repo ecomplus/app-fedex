@@ -247,8 +247,8 @@ exports.post = async ({ appSdk }, req, res) => {
 
           res.send(response)
         } else {
-          // console.log(data)
-          const err = new Error('Invalid Kangu calculate response')
+          // console.log(JSON.stringify(data))
+          const err = new Error('Invalid Fedex calculate response')
           err.response = { data, status }
           throw err
         }
