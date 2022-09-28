@@ -112,7 +112,7 @@ exports.post = async ({ appSdk }, req, res) => {
         weight: weightObject,
         customsValue,
         quantity,
-        name
+        name: item.sku
       })
     })
 
@@ -181,7 +181,6 @@ exports.post = async ({ appSdk }, req, res) => {
     )
 
       .then(({ data, status }) => {
-        console.log('Resultado da requisicao', data)
         let result
         if (typeof data === 'string') {
           try {
@@ -196,6 +195,7 @@ exports.post = async ({ appSdk }, req, res) => {
         } else {
           result = data
         }
+        console.log('Resultado da requisicao', JSON.parse(result))
 
         if (result && Number(status) === 200 && Array.isArray(result && result.output && result.output.rateReplyDetails)) {
           // success response
