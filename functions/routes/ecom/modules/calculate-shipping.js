@@ -195,7 +195,7 @@ exports.post = async ({ appSdk }, req, res) => {
         } else {
           result = data
         }
-        console.log('Resultado da requisicao', JSON.parse(result))
+        console.log('Resultado da requisicao', result)
 
         if (result && Number(status) === 200 && Array.isArray(result && result.output && result.output.rateReplyDetails)) {
           // success response
