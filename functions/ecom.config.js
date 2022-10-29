@@ -132,7 +132,7 @@ const app = {
     ],
 
     /**
-     * You can also set any other valid resource/subresource combination.
+     * You can also set any other valid resource/subresource combination ok.
      * Ref.: https://developers.e-com.plus/docs/api/#/store/
      */
   },
